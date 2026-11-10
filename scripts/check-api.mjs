@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import {processPhoto} from '../worker/api.js';
+const request=body=>new Request('https://example.test/api/prepare-hologram',{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://example.test'},body:JSON.stringify(body)});
+assert.equal((await processPhoto(request({}),{})).status,503);
+assert.equal((await processPhoto(request({image:'https://bad.test'}),{DEMO_ALLOW_PAID_AI:'true',MODEL_API_KEY:'test'})).status,400);
+const oldFetch=globalThis.fetch;globalThis.fetch=async(url,options)=>{assert.equal(url,'https://api.meta.ai/v1/images/edits');const body=JSON.parse(options.body);assert.equal(body.model,'muse-image-1.0');assert.equal(body.n,1);return Response.json({data:[{b64_json:'YWJj'}]})};
+let r=await processPhoto(request({image:'data:image/png;base64,YWJj'}),{DEMO_ALLOW_PAID_AI:'true',MODEL_API_KEY:'test'});assert.equal(r.status,200);assert.equal((await r.json()).image,'data:image/png;base64,YWJj');globalThis.fetch=async()=>new Response('',{status:401});r=await processPhoto(request({image:'data:image/png;base64,YWJj'}),{DEMO_ALLOW_PAID_AI:'true',MODEL_API_KEY:'test'});assert.equal(r.status,502);assert.match((await r.json()).error,/rejected/);globalThis.fetch=oldFetch;console.log('Passed: missing secret, input validation, Meta request/response, authentication failure.');

@@ -1,0 +1,2 @@
+import assert from 'node:assert/strict';import {pinchState,clampSize,scaledValue} from '../public/xr-math.js';
+assert.equal(pinchState(false,.021),true);assert.equal(pinchState(false,.025),false);assert.equal(pinchState(true,.025),true);assert.equal(pinchState(true,.036),false);assert.equal(clampSize(0),.25);assert.equal(clampSize(4),3);assert.equal(scaledValue(1,.1),1.1);assert.equal(scaledValue(.25,-.1),.25);console.log('XR checks passed: pinch hysteresis and bounded resizing.');

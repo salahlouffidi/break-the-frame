@@ -1,0 +1,1 @@
+{"name": "break-the-frame", "version": "0.1.0", "private": true, "type": "module", "license": "MIT", "scripts": {"dev": "node server.mjs", "build": "node scripts/build.mjs", "test": "node scripts/check-api.mjs && node scripts/check-xr.mjs && node scripts/check-xr-flow.mjs"}, "engines": {"node": ">=20.6"}}
